@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#ef4b3f">
+  <title>Τι τρώμε σήμερα;</title>
+  <!-- Γραμματοσειρές που υποστηρίζουν Ελληνικά -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@600;700&family=Manrope:wght@400;600;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- ============ ΚΕΦΑΛΙΔΑ ============ -->
+  <header class="hero">
+    <div class="hero-top">
+      <span id="syncChip" class="sync"></span>
+      <button id="logoutBtn" class="ghost hidden">Αποσύνδεση</button>
+    </div>
+    <h1 id="greet">Καλησπέρα!</h1>
+    <p id="tagline" class="tagline"></p>
+    <div class="floaty" aria-hidden="true">🍅 🧄 🫒 🍋 🥖</div>
+  </header>
+
+  <!-- Φίλτρα ατόμων: ισχύουν παντού -->
+  <div class="pfwrap">
+    <div id="personFilters" class="pfs"></div>
+  </div>
+
+  <main>
+    <!-- ============ 1. ΣΗΜΕΡΑ ============ -->
+    <section id="today" class="panel active">
+      <div class="dice-card">
+        <div class="filters">
+          <select id="catFilter" aria-label="Κατηγορία"><option value="">Όλες οι κατηγορίες</option></select>
+          <select id="timeFilter" aria-label="Χρόνος">
+            <option value="">Όσο χρόνο θέλει</option>
+            <option value="30">Βιάζομαι (έως 30')</option>
+            <option value="60">Έως 1 ώρα</option>
+            <option value="90">Έως 1,5 ώρα</option>
+          </select>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="useOnline" checked>
+          <span>Και διεθνείς συνταγές 🌍 <small>(TheMealDB, στα Αγγλικά)</small></span>
+        </label>
+        <button id="suggestBtn" class="cta">🎲 Ρίξε τα ζάρια</button>
+      </div>
+      <div id="suggestResults" class="cards"></div>
+
+      <div class="mini-row">
+        <button id="whoCooks" class="pill">🪙 Ποιος μαγειρεύει σήμερα;</button>
+      </div>
+      <p id="whoCooksResult" class="who"></p>
+    </section>
+
+    <!-- ============ 2. ΨΥΓΕΙΟ (Έχω υλικά) ============ -->
+    <section id="fridge" class="panel">
+      <h2>Τι έχει το ψυγείο; 🧊</h2>
+      <p class="hint">Γράψε τι έχεις και πάτα Enter. Αλάτι, πιπέρι, λάδι τα θεωρούμε δεδομένα.</p>
+      <div class="inputrow">
+        <input id="ingInput" type="text" placeholder="π.χ. κοτόπουλο, πατάτες, λεμόνι" autocomplete="off">
+        <button id="ingAdd" class="round">+</button>
+      </div>
+      <div id="quickIngs" class="quick"></div>
+      <div id="ingChips" class="chips"></div>
+      <label class="switch">
+        <input type="checkbox" id="pantryOnline" checked>
+        <span>Ψάξε και στο TheMealDB 🌍</span>
+      </label>
+      <button id="pantryBtn" class="cta">🔎 Τι φτιάχνω με αυτά;</button>
+      <div id="pantryResults"></div>
+    </section>
+
+    <!-- ============ 3. ΕΒΔΟΜΑΔΑ ============ -->
+    <section id="week" class="panel">
+      <h2>Το μενού της εβδομάδας 📅</h2>
+      <p class="hint">Όλα για 4 άτομα. Πάτα σε μια μέρα για τη συνταγή.</p>
+      <div class="mini-row">
+        <button id="fillWeek" class="cta small">✨ Γέμισέ μου την εβδομάδα</button>
+        <button id="clearWeek" class="pill">🧹 Νέα εβδομάδα</button>
+      </div>
+      <div id="weekList" class="week"></div>
+    </section>
+
+    <!-- ============ 4. ΨΩΝΙΑ ============ -->
+    <section id="shop" class="panel">
+      <h2>Λίστα για ψώνια 🛒</h2>
+      <p class="hint">Φτιάχνεται μόνη της από το μενού της εβδομάδας. Τσέκαρε ό,τι πήρες ή ό,τι έχεις ήδη.</p>
+      <div class="mini-row">
+        <button id="copyShop" class="pill">📋 Αντιγραφή λίστας</button>
+        <button id="resetShop" class="pill">↺ Ξε-τσέκαρε όλα</button>
+      </div>
+      <div id="shopList"></div>
+    </section>
+
+    <!-- ============ 5. ΣΥΝΤΑΓΕΣ & ΙΣΤΟΡΙΚΟ ============ -->
+    <section id="book" class="panel">
+      <div class="seg">
+        <button class="segbtn active" data-seg="all">📖 Όλες</button>
+        <button class="segbtn" data-seg="hist">🕓 Τι φάγαμε</button>
+      </div>
+      <div id="segAll">
+        <input id="searchInput" type="search" placeholder="Ψάξε όνομα ή υλικό…">
+        <div id="allList" class="list"></div>
+      </div>
+      <div id="segHist" class="hidden">
+        <p class="hint">Ό,τι πατάτε «Το φάγαμε» μπαίνει εδώ και δεν ξαναπροτείνεται για 7 μέρες.</p>
+        <div id="historyList" class="list"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============ ΚΑΤΩ ΜΠΑΡΑ ============ -->
+  <nav class="bottom">
+    <button class="tab active" data-tab="today"><b>🎲</b>Σήμερα</button>
+    <button class="tab" data-tab="fridge"><b>🧊</b>Ψυγείο</button>
+    <button class="tab" data-tab="week"><b>📅</b>Εβδομάδα</button>
+    <button class="tab" data-tab="shop"><b>🛒</b>Ψώνια</button>
+    <button class="tab" data-tab="book"><b>📖</b>Συνταγές</button>
+  </nav>
+
+  <!-- Παράθυρο συνταγής -->
+  <dialog id="sheet">
+    <button class="close" id="closeSheet" aria-label="Κλείσιμο">✕</button>
+    <div id="sheetBody"></div>
+  </dialog>
+
+  <!-- Οθόνη σύνδεσης (μόνο όταν υπάρχει Firebase) -->
+  <div id="login" class="overlay hidden">
+    <div class="ov-card">
+      <div class="big-emoji">🍽️</div>
+      <h2>Ποιος πεινάει;</h2>
+      <p id="loginText">Συνδεθείτε για να βλέπετε κοινό μενού και ιστορικό.</p>
+      <button id="loginBtn" class="cta">Σύνδεση με Google</button>
+    </div>
+  </div>
+
+  <!-- Μήνυμα-έκπληξη (μία φορά) -->
+  <div id="surprise" class="overlay hidden">
+    <div class="ov-card">
+      <div class="big-emoji">💌</div>
+      <h2 id="surpriseTitle"></h2>
+      <p id="surpriseText"></p>
+      <p id="surpriseSig" class="sig"></p>
+      <button id="surpriseBtn" class="cta"></button>
+    </div>
+  </div>
+
+  <div id="toast" class="toast"></div>
+
+  <!-- Firebase (αν δεν φορτώσει, το site δουλεύει τοπικά) -->
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore-compat.js"></script>
+  <!-- Τα δικά μας αρχεία, με αυτή τη σειρά -->
+  <script src="config.js"></script>
+  <script src="recipes.js"></script>
+  <script src="store.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
